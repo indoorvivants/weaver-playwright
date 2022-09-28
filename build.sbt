@@ -1,19 +1,13 @@
-Global / excludeLintKeys += logManager
-Global / excludeLintKeys += scalaJSUseMainModuleInitializer
-Global / excludeLintKeys += scalaJSLinkerConfig
-
 inThisBuild(
   List(
-    scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0",
+    scalafixDependencies += "com.github.liancheng" %% "organize-imports" % Versions.OrganizeImports,
     semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision,
-    scalafixScalaBinaryVersion := scalaBinaryVersion.value,
-    organization := "com.indoorvivants",
-    organizationName := "Anton Sviridov",
+    organization      := "com.indoorvivants.weaver",
+    organizationName  := "Anton Sviridov",
     homepage := Some(
-      url("https://github.com/indoorvivants/scala-library-template")
+      url("https://github.com/indoorvivants/weaver-playwright")
     ),
-    startYear := Some(2020),
+    startYear := Some(2022),
     licenses := List(
       "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
     ),
@@ -28,62 +22,68 @@ inThisBuild(
   )
 )
 
-// https://github.com/cb372/sbt-explicit-dependencies/issues/27
-lazy val disableDependencyChecks = Seq(
-  unusedCompileDependenciesTest := {},
-  missinglinkCheck := {},
-  undeclaredCompileDependenciesTest := {}
-)
+organization        := "com.indoorvivants.weaver"
+sonatypeProfileName := "com.indoorvivants"
 
-val Scala213 = "2.13.9"
-val Scala212 = "2.12.17"
-val Scala3 = "3.2.0"
-val scalaVersions = Seq(Scala3, Scala212, Scala213)
+val Versions = new {
 
-lazy val munitSettings = Seq(
-  libraryDependencies += {
-    "org.scalameta" %%% "munit" % "1.0.0-M6" % Test
-  },
-  testFrameworks += new TestFramework("munit.Framework")
-)
+  val Scala213 = "2.13.8"
 
-lazy val root = projectMatrix
-  .aggregate(core)
+  val Scala212 = "2.12.16"
+
+  val Scala3 = "3.2.0"
+
+  val allScala = Seq(Scala3, Scala212, Scala213)
+
+  val Weaver = "0.8.0"
+
+  val CatsEffect = "3.3.14"
+
+  val Cats = "2.8.0"
+
+  val Playwright = "1.26.0"
+
+  val OrganizeImports = "0.6.0"
+
+}
+
+lazy val root = project
+  .in(file("."))
+  .aggregate(core.projectRefs*)
 
 lazy val core = projectMatrix
   .in(file("modules/core"))
   .settings(
-    name := "core",
+    moduleName := "playwright",
     Test / scalacOptions ~= filterConsoleScalacOptions
   )
-  .settings(munitSettings)
-  .jvmPlatform(scalaVersions)
-  .jsPlatform(scalaVersions, disableDependencyChecks)
-  .nativePlatform(scalaVersions, disableDependencyChecks)
+  .jvmPlatform(Versions.allScala)
   .enablePlugins(BuildInfoPlugin)
   .settings(
-    buildInfoPackage := "com.indoorvivants.library.internal",
-    buildInfoKeys := Seq[BuildInfoKey](
-      version,
-      scalaVersion,
-      scalaBinaryVersion
+    libraryDependencies ++= Seq(
+      "com.disneystreaming" %% "weaver-cats"        % Versions.Weaver % Test,
+      "com.disneystreaming" %% "weaver-cats-core"   % Versions.Weaver,
+      "com.disneystreaming" %% "weaver-core"        % Versions.Weaver,
+      "org.typelevel"       %% "cats-core"          % Versions.Cats,
+      "org.typelevel"       %% "cats-effect"        % Versions.CatsEffect,
+      "org.typelevel"       %% "cats-effect-kernel" % Versions.CatsEffect,
+      "org.typelevel"       %% "cats-effect-std"    % Versions.CatsEffect,
+      "com.microsoft.playwright" % "playwright" % Versions.Playwright
     ),
-    scalaJSUseMainModuleInitializer := true,
-    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+    testFrameworks += new TestFramework("weaver.framework.CatsEffect")
   )
 
-lazy val docs = project
+lazy val docs = projectMatrix
+  .jvmPlatform(Seq(Versions.Scala213))
   .in(file("myproject-docs"))
   .settings(
-    scalaVersion := Scala213,
     mdocVariables := Map(
       "VERSION" -> version.value
     ),
-    publish / skip := true,
+    publish / skip      := true,
     publishLocal / skip := true
   )
-  .settings(disableDependencyChecks)
-  .dependsOn(core.jvm(Scala213))
+  .dependsOn(core)
   .enablePlugins(MdocPlugin)
 
 val scalafixRules = Seq(
