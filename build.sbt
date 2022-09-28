@@ -50,6 +50,10 @@ val Versions = new {
 lazy val root = project
   .in(file("."))
   .aggregate(core.projectRefs*)
+  .settings(
+    publish / skip      := true,
+    publishLocal / skip := true
+  )
 
 lazy val core = projectMatrix
   .in(file("modules/core"))
