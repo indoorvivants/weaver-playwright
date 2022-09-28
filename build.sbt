@@ -2,7 +2,7 @@ inThisBuild(
   List(
     scalafixDependencies += "com.github.liancheng" %% "organize-imports" % Versions.OrganizeImports,
     semanticdbEnabled := true,
-    organization      := "com.indoorvivants.weaver",
+    organization      := "com.indoorvivants.playwright",
     organizationName  := "Anton Sviridov",
     homepage := Some(
       url("https://github.com/indoorvivants/weaver-playwright")
@@ -22,7 +22,7 @@ inThisBuild(
   )
 )
 
-organization        := "com.indoorvivants.weaver"
+organization        := "com.indoorvivants.playwright"
 sonatypeProfileName := "com.indoorvivants"
 
 val Versions = new {
@@ -50,6 +50,7 @@ val Versions = new {
 lazy val root = project
   .in(file("."))
   .aggregate(core.projectRefs*)
+  .aggregate(weaver.projectRefs*)
   .settings(
     publish / skip      := true,
     publishLocal / skip := true
@@ -58,7 +59,27 @@ lazy val root = project
 lazy val core = projectMatrix
   .in(file("modules/core"))
   .settings(
-    moduleName := "playwright",
+    moduleName := "core",
+    Test / scalacOptions ~= filterConsoleScalacOptions
+  )
+  .jvmPlatform(Versions.allScala)
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.typelevel"           %% "cats-core"          % Versions.Cats,
+      "org.typelevel"           %% "cats-effect"        % Versions.CatsEffect,
+      "org.typelevel"           %% "cats-effect-kernel" % Versions.CatsEffect,
+      "org.typelevel"           %% "cats-effect-std"    % Versions.CatsEffect,
+      "com.microsoft.playwright" % "playwright"         % Versions.Playwright
+    ),
+    testFrameworks += new TestFramework("weaver.framework.CatsEffect")
+  )
+
+lazy val weaver = projectMatrix
+  .in(file("modules/weaver"))
+  .dependsOn(core)
+  .settings(
+    moduleName := "weaver",
     Test / scalacOptions ~= filterConsoleScalacOptions
   )
   .jvmPlatform(Versions.allScala)
@@ -71,8 +92,7 @@ lazy val core = projectMatrix
       "org.typelevel"       %% "cats-core"          % Versions.Cats,
       "org.typelevel"       %% "cats-effect"        % Versions.CatsEffect,
       "org.typelevel"       %% "cats-effect-kernel" % Versions.CatsEffect,
-      "org.typelevel"       %% "cats-effect-std"    % Versions.CatsEffect,
-      "com.microsoft.playwright" % "playwright" % Versions.Playwright
+      "org.typelevel"       %% "cats-effect-std"    % Versions.CatsEffect
     ),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
   )
@@ -87,7 +107,7 @@ lazy val docs = projectMatrix
     publish / skip      := true,
     publishLocal / skip := true
   )
-  .dependsOn(core)
+  .dependsOn(weaver)
   .enablePlugins(MdocPlugin)
 
 val scalafixRules = Seq(

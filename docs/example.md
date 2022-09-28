@@ -1,6 +1,7 @@
 
 ```scala mdoc
-//> using lib "com.indoorvivants.weaver::playwright:@VERSION@"
+//> using lib "com.indoorvivants.playwright::weaver:@VERSION@"
+//> using lib "com.disneystreaming::weaver-cats:0.8.0"
 
 import com.indoorvivants.weaver.playwright._
 

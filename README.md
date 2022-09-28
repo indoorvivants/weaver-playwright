@@ -8,7 +8,7 @@ Here's an example of usage which is also a [Scala CLI](https://scala-cli.virtusl
 
 **test.scala**
 ```scala mdoc
-//> using lib "com.indoorvivants.weaver::playwright:0.0.1"
+//> using lib "com.indoorvivants.playwright::weaver:0.0.2"
 //> using lib "com.disneystreaming::weaver-cats:0.8.0"
 
 import com.indoorvivants.weaver.playwright._
