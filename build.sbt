@@ -91,8 +91,7 @@ lazy val weaver = projectMatrix
       "com.disneystreaming" %% "weaver-core"        % Versions.Weaver,
       "org.typelevel"       %% "cats-core"          % Versions.Cats,
       "org.typelevel"       %% "cats-effect"        % Versions.CatsEffect,
-      "org.typelevel"       %% "cats-effect-kernel" % Versions.CatsEffect,
-      "org.typelevel"       %% "cats-effect-std"    % Versions.CatsEffect
+      "org.typelevel"       %% "cats-effect-kernel" % Versions.CatsEffect
     ),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
   )
