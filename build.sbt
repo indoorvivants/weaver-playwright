@@ -140,3 +140,7 @@ val PrepareCICommands = Seq(
 addCommandAlias("ci", CICommands)
 
 addCommandAlias("preCI", PrepareCICommands)
+
+import ch.epfl.scala.sbtmissinglink.MissingLinkPlugin.missinglinkConflictsTag
+
+ThisBuild / concurrentRestrictions += Tags.limit(missinglinkConflictsTag, 4)
