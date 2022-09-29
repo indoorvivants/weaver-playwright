@@ -14,7 +14,7 @@ Here's an example of usage which is also a [Scala CLI](https://scala-cli.virtusl
 import com.indoorvivants.weaver.playwright._
 import cats.effect._
 
-object Example extends weaver.IOSuite with PlaywrightIntegration {
+object Example extends weaver.IOSuite with PlaywrightSpec {
   def sharedResource: Resource[IO, Res] = PlaywrightRuntime.create()
 
   pageTest("hello playwright!") { pc =>

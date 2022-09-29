@@ -15,7 +15,7 @@ object SharedResources extends weaver.GlobalResource {
 
 class BasicTests(global: weaver.GlobalRead)
     extends weaver.IOSuite
-    with PlaywrightIntegration {
+    with PlaywrightSpec {
 
   override def sharedResource: Resource[IO, Res] =
     global.getOrFailR[PlaywrightRuntime]()
