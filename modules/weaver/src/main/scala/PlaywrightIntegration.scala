@@ -23,17 +23,27 @@ import cats.data.Validated.Valid
 import cats.effect._
 import weaver._
 
-trait PlaywrightIntegration { self: IOSuite =>
+trait PlaywrightSpec extends PlaywrightIntegration { self: IOSuite =>
   override type Res = PlaywrightRuntime
+  override def getPlaywright(res: PlaywrightRuntime): PlaywrightRuntime = res
+}
+
+trait PlaywrightIntegration { self: IOSuite =>
+
+  def getPlaywright(res: Res): PlaywrightRuntime
 
   def retryPolicy: PlaywrightRetry =
     PlaywrightRetry.linear(5, 1.second) // 5 seconds max
 
   def pageTest(tn: TestName)(f: PageContext => IO[Expectations]): Unit = {
     self.test(tn) { res =>
-      res.pageContext.use(f)
+      getPlaywright(res).pageContext.use(f)
     }
   }
+
+  def getPageContext(res: Res): Resource[IO, PageContext] = getPlaywright(
+    res
+  ).pageContext
 
   def eventually[A](
       a: IO[A],

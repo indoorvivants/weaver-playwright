@@ -120,7 +120,6 @@ val CICommands = Seq(
   "clean",
   "compile",
   "test",
-  "docs/mdoc",
   "docs/mdoc --in README.md",
   "scalafmtCheckAll",
   "scalafmtSbtCheck",
@@ -135,10 +134,13 @@ val PrepareCICommands = Seq(
   s"scalafix --rules $scalafixRules",
   "scalafmtAll",
   "scalafmtSbt",
-  "headerCreate",
-  "undeclaredCompileDependenciesTest"
+  "headerCreate"
 ).mkString(";")
 
 addCommandAlias("ci", CICommands)
 
 addCommandAlias("preCI", PrepareCICommands)
+
+import ch.epfl.scala.sbtmissinglink.MissingLinkPlugin.missinglinkConflictsTag
+
+ThisBuild / concurrentRestrictions += Tags.limit(missinglinkConflictsTag, 4)
