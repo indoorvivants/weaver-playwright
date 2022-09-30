@@ -24,27 +24,55 @@ import cats.effect._
 import cats.effect.std.Semaphore
 import cats.syntax.all._
 import com.microsoft.playwright._
+import org.tpolecat.poolparty.PooledResourceBuilder
 
 import BrowserConfig._
 
-class PlaywrightRuntime(browser: Browser, sem: Semaphore[IO]) {
+trait PlaywrightRuntime {
+  def pageContext: Resource[IO, PageContext]
+}
+
+private[playwright] class PooledPlaywrightRuntime(
+    pool: Resource[IO, PlaywrightRuntime]
+) extends PlaywrightRuntime {
+  override def pageContext: Resource[IO, PageContext] =
+    pool.flatMap(_.pageContext)
+}
+
+private[playwright] class SinglePlaywrightRuntime(
+    browser: Browser,
+    sem: Semaphore[IO]
+) extends PlaywrightRuntime {
   def pageContext: Resource[IO, PageContext] = {
-    sem.permit.flatMap { _ =>
+    sem.permit >>
       Resource
         .make(IO(browser.newContext()))(c => IO(c.close()))
         .flatMap { ctx =>
-          Resource.make(IO(ctx.newPage()))(pg => IO(pg.close())).map { pg =>
-            new PageContext(ctx, pg)
-          }
+          Resource
+            .make(IO(ctx.newPage()))(pg => IO(pg.close()))
+            .map { pg =>
+              new PageContext(ctx, pg)
+            }
         }
 
-    }
   }
 }
 
 object PlaywrightRuntime {
 
   def create(
+      browser: BrowserConfig = Chromium(None),
+      recoverRetry: PlaywrightRetry = PlaywrightRetry.linear(5, 2.second),
+      poolSize: Int = Runtime.getRuntime().availableProcessors()
+  ): Resource[IO, PlaywrightRuntime] = {
+    val res = single(browser, recoverRetry)
+    PooledResourceBuilder
+      .of(res, poolSize)
+      .build
+      .map(new PooledPlaywrightRuntime(_))
+  }
+
+  def single(
       browser: BrowserConfig = Chromium(None),
       recoverRetry: PlaywrightRetry = PlaywrightRetry.linear(5, 2.second)
   ): Resource[IO, PlaywrightRuntime] = {
@@ -77,8 +105,7 @@ object PlaywrightRuntime {
 
         val sem = Resource.eval(Semaphore[IO](1))
 
-        (created, sem)
-          .mapN(new PlaywrightRuntime(_, _))
+        (created, sem).mapN(new SinglePlaywrightRuntime(_, _))
       }
 
   }
