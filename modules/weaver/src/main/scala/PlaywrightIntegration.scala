@@ -23,6 +23,29 @@ import cats.data.Validated.Valid
 import cats.effect._
 import weaver._
 
+object PlaywrightExpectations {
+  def eventually[A](
+      a: IO[A],
+      policy: PlaywrightRetry = PlaywrightRetry.no
+  )(f: A => Expectations): IO[Unit] = {
+    def go(n: Int, last: Expectations): IO[Unit] =
+      policy.next(n) match {
+        case None => last.failFast[IO]
+        case Some(delay) =>
+          a.flatMap { value =>
+            val last = f(value)
+            last.run match {
+              case Invalid(_) =>
+                IO.sleep(delay) >> go(n + 1, last)
+              case Valid(_) => IO.unit
+            }
+          }
+      }
+
+    go(1, weaver.Expectations.Helpers.success)
+  }
+}
+
 trait PlaywrightSpec extends PlaywrightIntegration { self: IOSuite =>
   override type Res = PlaywrightRuntime
   override def getPlaywright(res: PlaywrightRuntime): PlaywrightRuntime = res
@@ -48,21 +71,7 @@ trait PlaywrightIntegration { self: IOSuite =>
   def eventually[A](
       a: IO[A],
       policy: PlaywrightRetry = retryPolicy
-  )(f: A => Expectations): IO[Unit] = {
-    def go(n: Int, last: Expectations): IO[Unit] =
-      policy.next(n) match {
-        case None => last.failFast[IO]
-        case Some(delay) =>
-          a.flatMap { value =>
-            val last = f(value)
-            last.run match {
-              case Invalid(_) =>
-                IO.sleep(delay) >> go(n + 1, last)
-              case Valid(_) => IO.unit
-            }
-          }
-      }
+  )(f: A => Expectations): IO[Unit] =
+    PlaywrightExpectations.eventually(a, policy)(f)
 
-    go(1, success)
-  }
 }

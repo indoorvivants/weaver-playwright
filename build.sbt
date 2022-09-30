@@ -29,11 +29,9 @@ val Versions = new {
 
   val Scala213 = "2.13.8"
 
-  val Scala212 = "2.12.16"
-
   val Scala3 = "3.2.0"
 
-  val allScala = Seq(Scala3, Scala212, Scala213)
+  val allScala = Seq(Scala3, Scala213)
 
   val Weaver = "0.8.0"
 
@@ -44,6 +42,8 @@ val Versions = new {
   val Playwright = "1.26.0"
 
   val OrganizeImports = "0.6.0"
+
+  val PoolParty = "0.0.3"
 
 }
 
@@ -70,6 +70,7 @@ lazy val core = projectMatrix
       "org.typelevel"           %% "cats-effect"        % Versions.CatsEffect,
       "org.typelevel"           %% "cats-effect-kernel" % Versions.CatsEffect,
       "org.typelevel"           %% "cats-effect-std"    % Versions.CatsEffect,
+      "org.tpolecat"            %% "pool-party"         % Versions.PoolParty,
       "com.microsoft.playwright" % "playwright"         % Versions.Playwright
     ),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
