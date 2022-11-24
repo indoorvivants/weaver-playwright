@@ -27,11 +27,13 @@ sonatypeProfileName := "com.indoorvivants"
 
 val Versions = new {
 
+  val Scala212 = "2.12.17"
+
   val Scala213 = "2.13.8"
 
   val Scala3 = "3.2.0"
 
-  val allScala = Seq(Scala3, Scala213)
+  val allScala = Seq(Scala3, Scala213, Scala212)
 
   val Weaver = "0.8.0"
 
