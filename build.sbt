@@ -27,11 +27,13 @@ sonatypeProfileName := "com.indoorvivants"
 
 val Versions = new {
 
+  val Scala212 = "2.12.17"
+
   val Scala213 = "2.13.8"
 
   val Scala3 = "3.2.0"
 
-  val allScala = Seq(Scala3, Scala213)
+  val allScala = Seq(Scala3, Scala213, Scala212)
 
   val Weaver = "0.8.0"
 
@@ -43,7 +45,7 @@ val Versions = new {
 
   val OrganizeImports = "0.6.0"
 
-  val PoolParty = "0.0.3"
+  val Keypool = "0.4.8"
 
 }
 
@@ -70,7 +72,7 @@ lazy val core = projectMatrix
       "org.typelevel"           %% "cats-effect"        % Versions.CatsEffect,
       "org.typelevel"           %% "cats-effect-kernel" % Versions.CatsEffect,
       "org.typelevel"           %% "cats-effect-std"    % Versions.CatsEffect,
-      "org.tpolecat"            %% "pool-party"         % Versions.PoolParty,
+      "org.typelevel"           %% "keypool"            % Versions.Keypool,
       "com.microsoft.playwright" % "playwright"         % Versions.Playwright
     ),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
