@@ -24,7 +24,7 @@ import cats.effect._
 import cats.effect.std.Semaphore
 import cats.syntax.all._
 import com.microsoft.playwright._
-import org.tpolecat.poolparty.PooledResourceBuilder
+import org.typelevel.keypool._
 
 import BrowserConfig._
 
@@ -33,10 +33,10 @@ trait PlaywrightRuntime {
 }
 
 private[playwright] class PooledPlaywrightRuntime(
-    pool: Resource[IO, PlaywrightRuntime]
+    pool: Pool[IO, PlaywrightRuntime]
 ) extends PlaywrightRuntime {
   override def pageContext: Resource[IO, PageContext] =
-    pool.flatMap(_.pageContext)
+    pool.take.map(_.value).flatMap(_.pageContext)
 }
 
 private[playwright] class SinglePlaywrightRuntime(
@@ -46,10 +46,10 @@ private[playwright] class SinglePlaywrightRuntime(
   def pageContext: Resource[IO, PageContext] = {
     sem.permit >>
       Resource
-        .make(IO(browser.newContext()))(c => IO(c.close()))
+        .fromAutoCloseable(IO(browser.newContext()))
         .flatMap { ctx =>
           Resource
-            .make(IO(ctx.newPage()))(pg => IO(pg.close()))
+            .fromAutoCloseable(IO(ctx.newPage()))
             .map { pg =>
               new PageContext(ctx, pg)
             }
@@ -66,8 +66,9 @@ object PlaywrightRuntime {
       poolSize: Int = Runtime.getRuntime().availableProcessors()
   ): Resource[IO, PlaywrightRuntime] = {
     val res = single(browser, recoverRetry)
-    PooledResourceBuilder
-      .of(res, poolSize)
+    Pool
+      .Builder(res)
+      .withMaxTotal(poolSize)
       .build
       .map(new PooledPlaywrightRuntime(_))
   }
@@ -90,12 +91,10 @@ object PlaywrightRuntime {
     )
     import BrowserConfig._
     Resource
-      .make(withRetries)(inst => IO(inst.close()))
+      .fromAutoCloseable(withRetries)
       .flatMap { pw =>
         def create(f: Playwright => BrowserType) =
-          Resource.make(IO(f(pw).launch(browser.lo.orNull)))(bw =>
-            IO(bw.close())
-          )
+          Resource.fromAutoCloseable(IO(f(pw).launch(browser.lo.orNull)))
 
         val created = browser match {
           case _: Chromium => create(_.chromium())

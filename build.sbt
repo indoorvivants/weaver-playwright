@@ -43,7 +43,7 @@ val Versions = new {
 
   val OrganizeImports = "0.6.0"
 
-  val PoolParty = "0.0.3"
+  val Keypool = "0.4.8"
 
 }
 
@@ -70,7 +70,7 @@ lazy val core = projectMatrix
       "org.typelevel"           %% "cats-effect"        % Versions.CatsEffect,
       "org.typelevel"           %% "cats-effect-kernel" % Versions.CatsEffect,
       "org.typelevel"           %% "cats-effect-std"    % Versions.CatsEffect,
-      "org.tpolecat"            %% "pool-party"         % Versions.PoolParty,
+      "org.typelevel"           %% "keypool"            % Versions.Keypool,
       "com.microsoft.playwright" % "playwright"         % Versions.Playwright
     ),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
