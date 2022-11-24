@@ -41,7 +41,7 @@ val Versions = new {
 
   val Cats = "2.8.0"
 
-  val Playwright = "1.26.0"
+  val Playwright = "1.26.1"
 
   val OrganizeImports = "0.6.0"
 
