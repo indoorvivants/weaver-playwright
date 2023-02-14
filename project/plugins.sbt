@@ -18,4 +18,4 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.11.0")
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.9.0")
 
 // Compiled documentation
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.3.6")
+addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.3.7")
