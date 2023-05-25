@@ -35,7 +35,7 @@ val Versions = new {
 
   val allScala = Seq(Scala3, Scala213, Scala212)
 
-  val Weaver = "0.8.2"
+  val Weaver = "0.8.3"
 
   val CatsEffect = "3.4.8"
 
