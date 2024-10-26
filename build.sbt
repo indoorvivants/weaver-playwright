@@ -39,7 +39,7 @@ val Versions = new {
 
   val CatsEffect = "3.5.3"
 
-  val Cats = "2.9.0"
+  val Cats = "2.12.0"
 
   val Playwright = "1.41.2"
 
