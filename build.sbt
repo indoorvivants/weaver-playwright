@@ -51,8 +51,8 @@ val Versions = new {
 
 lazy val root = project
   .in(file("."))
-  .aggregate(core.projectRefs*)
-  .aggregate(weaver.projectRefs*)
+  .aggregate(core.projectRefs *)
+  .aggregate(weaver.projectRefs *)
   .settings(
     publish / skip      := true,
     publishLocal / skip := true
