@@ -45,7 +45,7 @@ val Versions = new {
 
   val OrganizeImports = "0.6.0"
 
-  val Keypool = "0.4.8"
+  val Keypool = "0.4.10"
 
 }
 
