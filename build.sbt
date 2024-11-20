@@ -37,7 +37,7 @@ val Versions = new {
 
   val Weaver = "0.8.4"
 
-  val CatsEffect = "3.5.5"
+  val CatsEffect = "3.5.6"
 
   val Cats = "2.9.0"
 
