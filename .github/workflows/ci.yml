@@ -10,17 +10,19 @@ jobs:
   build:
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin' 
           java-version: '17'
           cache: 'sbt'
+
+      - uses: sbt/setup-sbt@v1
 
       - name: Test
         run: sbt --client ci
