@@ -35,7 +35,7 @@ val Versions = new {
 
   val allScala = Seq(Scala3, Scala213, Scala212)
 
-  val Weaver = "0.8.4"
+  val Weaver = "0.11.2"
 
   val CatsEffect = "3.5.7"
 
@@ -89,12 +89,12 @@ lazy val weaver = projectMatrix
   .enablePlugins(BuildInfoPlugin)
   .settings(
     libraryDependencies ++= Seq(
-      "com.disneystreaming" %% "weaver-cats"        % Versions.Weaver % Test,
-      "com.disneystreaming" %% "weaver-cats-core"   % Versions.Weaver,
-      "com.disneystreaming" %% "weaver-core"        % Versions.Weaver,
-      "org.typelevel"       %% "cats-core"          % Versions.Cats,
-      "org.typelevel"       %% "cats-effect"        % Versions.CatsEffect,
-      "org.typelevel"       %% "cats-effect-kernel" % Versions.CatsEffect
+      "org.typelevel" %% "weaver-cats"        % Versions.Weaver % Test,
+      "org.typelevel" %% "weaver-cats-core"   % Versions.Weaver,
+      "org.typelevel" %% "weaver-core"        % Versions.Weaver,
+      "org.typelevel" %% "cats-core"          % Versions.Cats,
+      "org.typelevel" %% "cats-effect"        % Versions.CatsEffect,
+      "org.typelevel" %% "cats-effect-kernel" % Versions.CatsEffect
     ),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
   )
