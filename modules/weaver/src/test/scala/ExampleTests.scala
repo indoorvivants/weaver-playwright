@@ -1,10 +1,7 @@
 import java.nio.file.Paths
 
-import scala.concurrent.duration._
-
 import cats.effect.IO
 import cats.effect.Resource
-import cats.syntax.all._
 import com.indoorvivants.weaver.playwright._
 import weaver.GlobalWrite
 
@@ -43,9 +40,9 @@ class BasicTests(global: weaver.GlobalRead)
         _ <- pc.locator("text=submit").map(_.first().click())
         _ <-
           eventually(invalidCredentials)(ic => expect(ic == 1))
-            .onError(_ =>
+            .onError { case _ =>
               pc.screenshot(Paths.get("failed-to-see-invalid-credentials.png"))
-            )
+            }
       } yield success
     }
   }

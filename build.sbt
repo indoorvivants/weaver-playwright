@@ -23,29 +23,29 @@ inThisBuild(
 )
 
 organization        := "com.indoorvivants.playwright"
-sonatypeProfileName := "com.indoorvivants"
+// sonatypeProfileName := "com.indoorvivants"
 
 val Versions = new {
 
-  val Scala212 = "2.12.17"
+  val Scala212 = "2.12.21"
 
-  val Scala213 = "2.13.16"
+  val Scala213 = "2.13.18"
 
-  val Scala3 = "3.3.7"
+  val Scala3 = "3.3.8"
 
   val allScala = Seq(Scala3, Scala213, Scala212)
 
-  val Weaver = "0.8.4"
+  val Weaver = "0.13.0"
 
-  val CatsEffect = "3.5.7"
+  val CatsEffect = "3.7.1"
 
-  val Cats = "2.9.0"
+  val Cats = "2.13.0"
 
-  val Playwright = "1.56.0"
+  val Playwright = "1.63.0"
 
   val OrganizeImports = "0.6.0"
 
-  val Keypool = "0.4.8"
+  val Keypool = "0.4.11"
 
 }
 
@@ -62,7 +62,7 @@ lazy val core = projectMatrix
   .in(file("modules/core"))
   .settings(
     moduleName := "core",
-    Test / scalacOptions ~= filterConsoleScalacOptions
+    // Test / scalacOptions ~= filterConsoleScalacOptions
   )
   .jvmPlatform(Versions.allScala)
   .enablePlugins(BuildInfoPlugin)
@@ -83,15 +83,15 @@ lazy val weaver = projectMatrix
   .dependsOn(core)
   .settings(
     moduleName := "weaver",
-    Test / scalacOptions ~= filterConsoleScalacOptions
+    // Test / scalacOptions ~= filterConsoleScalacOptions
   )
   .jvmPlatform(Versions.allScala)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     libraryDependencies ++= Seq(
-      "com.disneystreaming" %% "weaver-cats"        % Versions.Weaver % Test,
-      "com.disneystreaming" %% "weaver-cats-core"   % Versions.Weaver,
-      "com.disneystreaming" %% "weaver-core"        % Versions.Weaver,
+      "org.typelevel" %% "weaver-cats"        % Versions.Weaver % Test,
+      "org.typelevel" %% "weaver-cats-core"   % Versions.Weaver,
+      "org.typelevel" %% "weaver-core"        % Versions.Weaver,
       "org.typelevel"       %% "cats-core"          % Versions.Cats,
       "org.typelevel"       %% "cats-effect"        % Versions.CatsEffect,
       "org.typelevel"       %% "cats-effect-kernel" % Versions.CatsEffect
