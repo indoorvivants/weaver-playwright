@@ -1,10 +1,7 @@
 import java.nio.file.Paths
 
-import scala.concurrent.duration._
-
 import cats.effect.IO
 import cats.effect.Resource
-import cats.syntax.all._
 import com.indoorvivants.weaver.playwright._
 import weaver.GlobalWrite
 
